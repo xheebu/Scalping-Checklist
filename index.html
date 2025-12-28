@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Scalping Checklist</title>
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Dark Navy */
+            --card-bg: #1e293b; /* Lighter Navy */
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981; /* Crypto Green */
+            --accent-red: #ef4444;   /* Crypto Red */
+            --border-color: #334155;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+            padding: 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .actions button {
+            background-color: var(--border-color);
+            color: var(--text-main);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-left: 10px;
+        }
+
+        .actions button:hover {
+            background-color: #475569;
+        }
+
+        .actions button.reset-btn {
+            background-color: #b91c1c;
+            color: white;
+        }
+
+        /* --- DASHBOARD STATUS --- */
+        #status-bar {
+            padding: 15px 30px;
+            background-color: #334155;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .status-waiting { background-color: #64748b; color: white; }
+        .status-go { background-color: var(--accent-green); color: #064e3b; box-shadow: 0 0 10px var(--accent-green); }
+        .status-stop { background-color: var(--accent-red); color: white; box-shadow: 0 0 10px var(--accent-red); }
+
+        /* --- TABLE STYLES --- */
+        .checklist-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #0f172a;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            position: sticky;
+            top: 0;
+        }
+
+        /* Column Widths */
+        th:nth-child(1) { width: 70%; }
+        th:nth-child(2) { width: 15%; text-align: center; color: var(--accent-green); }
+        th:nth-child(3) { width: 15%; text-align: center; color: var(--accent-red); }
+        
+        td:nth-child(2), td:nth-child(3) { text-align: center; }
+
+        /* Section Headers */
+        .section-header {
+            background-color: #283549;
+            color: #60a5fa; /* Light Blue */
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* Hover Effect */
+        tr:not(.section-header):hover {
+            background-color: #334155;
+        }
+
+        /* --- CHECKBOX STYLING --- */
+        /* Custom Checkboxes */
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        /* Pass Checkbox */
+        .check-pass:checked {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+        .check-pass:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            left: 3px;
+            top: -1px;
+        }
+
+        /* Fail Checkbox */
+        .check-fail:checked {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+        .check-fail:checked::after {
+            content: '✕';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            left: 3px;
+            top: -1px;
+        }
+
+        /* Row styling when failed */
+        tr.row-failed {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        tr.row-passed {
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            body { background-color: white; color: black; }
+            .container { box-shadow: none; border: none; }
+            .actions, #status-bar { display: none; }
+            th { color: black; background-color: #ddd; }
+            tr { page-break-inside: avoid; }
+            .section-header { background-color: #eee; color: black; border-top: 2px solid black; }
+            th, td { border-bottom: 1px solid #ccc; }
+            input[type="checkbox"] { border: 1px solid black; }
+            .check-pass:checked { background-color: black; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>Scalping Checklist</h1>
+            <div class="subtitle">Discipline • Patience • Execution</div>
+        </div>
+        <div class="actions">
+            <button onclick="window.print()">Print / PDF</button>
+            <button class="reset-btn" onclick="resetForm()">Reset All</button>
+        </div>
+    </header>
+
+    <div id="status-bar">
+        <span>Current Status:</span>
+        <span id="trade-status" class="status-indicator status-waiting">Waiting for Checks...</span>
+    </div>
+
+    <table class="checklist-table" id="checklist">
+        <thead>
+            <tr>
+                <th>Statement / Question</th>
+                <th>PASS (✓)</th>
+                <th>FAIL (✕)</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // The Data Structure for the Checklist
+    const checklistData = [
+        {
+            section: "Psychology Check",
+            items: [
+                "Emotions in Control",
+                "No Stress",
+                "Full Energy",
+                "No extreme excitement or sadness",
+                "Not too tired / Time not too short"
+            ]
+        },
+        {
+            section: "Equipment Check",
+            items: [
+                "Electricity available for next 3-4 hours",
+                "Laptop available (No mobile trading)",
+                "Headphones/Music ready",
+                "Internet fast / Backup data available"
+            ]
+        },
+        {
+            section: "Pre-Trade Check",
+            items: [
+                "Relaxing music playing (No sad music)",
+                "Cleared emotions from previous trades",
+                "Selected high volume pair (e.g. ETH/USDT)",
+                "Defined max trades for today",
+                "Defined position size",
+                "Leverage ≤ 25x",
+                "Stop Loss defined (1-2% Capital)",
+                "Daily Loss Limit defined (3-5% Capital)",
+                "Profit Target defined (1:1 or 1:2 RR)",
+                "Market Trend identified (4H)",
+                "Market Trend identified (1H)",
+                "Support & Resistance drawn (1M / 5M)",
+                "Indicators set (Minimal usage)",
+                "No hesitation (If hesitant, recheck)",
+                "Setup complete according to rules"
+            ]
+        },
+        {
+            section: "Mid-Trade Check",
+            items: [
+                "Stop Loss placed immediately",
+                "SL NOT moved down if trade goes against",
+                "At 50% profit: Partial close & Move SL to Break-even",
+                "If hesitant mid-trade: Closed immediately?"
+            ]
+        },
+        {
+            section: "Post-Trade Check",
+            items: [
+                "Feel normal (Not excited/regretful)",
+                "No REVENGE TRADING",
+                "Break taken after streak (Win/Lose)",
+                "Pre-trade setup ready before next trade",
+                "Trade count within limit (<10/session)"
+            ]
+        }
+    ];
+
+    const tableBody = document.getElementById('table-body');
+    const statusLabel = document.getElementById('trade-status');
+
+    // 1. Render the Table
+    function renderTable() {
+        let html = '';
+        let globalIndex = 0; // Unique ID for each row
+
+        checklistData.forEach(section => {
+            // Section Header
+            html += `<tr class="section-header"><td colspan="3">${section.section}</td></tr>`;
+            
+            // Rows
+            section.items.forEach(item => {
+                html += `
+                    <tr id="row-${globalIndex}">
+                        <td>${item}</td>
+                        <td>
+                            <input type="checkbox" class="check-pass" 
+                                   data-id="${globalIndex}" onclick="handleCheck(${globalIndex}, 'pass')">
+                        </td>
+                        <td>
+                            <input type="checkbox" class="check-fail" 
+                                   data-id="${globalIndex}" onclick="handleCheck(${globalIndex}, 'fail')">
+                        </td>
+                    </tr>
+                `;
+                globalIndex++;
+            });
+        });
+        tableBody.innerHTML = html;
+    }
+
+    // 2. Handle Checkbox Logic (Mutual Exclusivity)
+    window.handleCheck = function(id, type) {
+        const row = document.getElementById(`row-${id}`);
+        const passBox = row.querySelector('.check-pass');
+        const failBox = row.querySelector('.check-fail');
+
+        if (type === 'pass') {
+            if (passBox.checked) {
+                failBox.checked = false; // Uncheck fail
+                row.classList.add('row-passed');
+                row.classList.remove('row-failed');
+            } else {
+                row.classList.remove('row-passed');
+            }
+        } else if (type === 'fail') {
+            if (failBox.checked) {
+                passBox.checked = false; // Uncheck pass
+                row.classList.add('row-failed');
+                row.classList.remove('row-passed');
+            } else {
+                row.classList.remove('row-failed');
+            }
+        }
+        updateStatus();
+    };
+
+    // 3. Update Status Dashboard
+    function updateStatus() {
+        const allFailBoxes = document.querySelectorAll('.check-fail');
+        const allPassBoxes = document.querySelectorAll('.check-pass');
+        
+        let failCount = 0;
+        let passCount = 0;
+        let totalItems = allPassBoxes.length;
+
+        allFailBoxes.forEach(box => { if(box.checked) failCount++; });
+        allPassBoxes.forEach(box => { if(box.checked) passCount++; });
+
+        // Logic
+        if (failCount > 0) {
+            statusLabel.textContent = "⛔ STOP TRADING: " + failCount + " Rules Failed";
+            statusLabel.className = "status-indicator status-stop";
+        } else if (passCount === totalItems) {
+            statusLabel.textContent = "✅ ALL SYSTEMS GO - READY TO TRADE";
+            statusLabel.className = "status-indicator status-go";
+        } else {
+            statusLabel.textContent = `⚠️ INCOMPLETE (${passCount}/${totalItems} Checked)`;
+            statusLabel.className = "status-indicator status-waiting";
+        }
+    }
+
+    // 4. Reset Form
+    window.resetForm = function() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(box => box.checked = false);
+        const rows = document.querySelectorAll('tr');
+        rows.forEach(row => {
+            row.classList.remove('row-passed');
+            row.classList.remove('row-failed');
+        });
+        updateStatus();
+    };
+
+    // Initialize
+    renderTable();
+
+</script>
+
+</body>
+</html>
